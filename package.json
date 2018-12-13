@@ -1,0 +1,76 @@
+{
+  "name": "@artalar/react-single-hoc",
+  "private": false,
+  "version": "0.0.1",
+  "description": "",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "scripts": {
+    "prepublishOnly": "npm run rebuild && npm run test",
+    "postpublish": "npm run clean",
+    "build": "npm run clean && npm run build:cjs && npm run build:es",
+    "build:cjs": "cross-env BABEL_ENV=commonjs webpack",
+    "build:es": "webpack",
+    "clean": "npm run clean:es && npm run clean:cjs",
+    "clean:cjs": "rimraf lib/",
+    "clean:es": "rimraf es/",
+    "rebuild": "npm run rebuild:es && npm run rebuild:cjs",
+    "rebuild:cjs": "npm run clean:cjs & npm run build:cjs",
+    "rebuild:es": "npm run clean:es & npm run build:es",
+    "flow": "flow",
+    "test": "jest",
+    "test-dev": "jest --watch"
+  },
+  "peerDependencies": {
+    "react": "16.x"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.5",
+    "@babel/core": "^7.1.6",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/polyfill": "^7.0.0",
+    "@babel/preset-env": "^7.1.6",
+    "@babel/preset-flow": "^7.0.0",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^23.6.0",
+    "babel-loader": "^8.0.4",
+    "cross-env": "^5.2.0",
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-plugin-flowtype": "^3.2.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jest": "^22.0.0",
+    "eslint-plugin-prettier": "^3.0.0",
+    "flow-bin": "^0.86.0",
+    "jest": "^23.6.0",
+    "prettier": "^1.15.2",
+    "rimraf": "^2.6.2",
+    "webpack": "^4.25.1",
+    "webpack-cli": "^3.1.2"
+  },
+  "author": "artalar",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/artalar/react-single-hoc.git"
+  },
+  "bugs": {
+    "url": "https://github.com/artalar/react-single-hoc/issues"
+  },
+  "homepage": "https://github.com/artalar/react-single-hoc",
+  "keywords": [
+    "react",
+    "react-hooks",
+    "HOC"
+  ],
+  "jest": {
+    "transform": {
+      ".jsx?$": "babel-jest"
+    }
+  },
+  "directories": {
+    "lib": "lib"
+  }
+}
