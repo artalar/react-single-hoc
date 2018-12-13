@@ -1,4 +1,5 @@
 const path = require('path');
+const PeerDepsExternalsPlugin = require('peer-deps-externals-webpack-plugin');
 
 module.exports = {
   mode: 'production',
@@ -26,6 +27,7 @@ module.exports = {
       },
     ],
   },
+  plugins: [new PeerDepsExternalsPlugin()],
   stats: {
     colors: true,
   },
