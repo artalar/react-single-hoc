@@ -1,7 +1,7 @@
 {
   "name": "@artalar/react-single-hoc",
   "private": false,
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -54,6 +54,7 @@
   },
   "author": "artalar",
   "license": "MIT",
+  "readme": "README.md",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/artalar/react-single-hoc.git"
