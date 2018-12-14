@@ -1,6 +1,6 @@
 # react-single-hoc
 
-> Inspired by (React hooks)[https://reactjs.org/docs/hooks-intro.html] and [react-factory-hooks](https://github.com/PutziSan/react-factory-hooks)
+> Inspired by [React hooks](https://reactjs.org/docs/hooks-intro.html) and [react-factory-hooks](https://github.com/PutziSan/react-factory-hooks)
 
 ## Motivation
 
