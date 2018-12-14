@@ -8,7 +8,7 @@ const context = React.createContext({});
 
 export const Provider = context.Provider;
 
-export function withHooks(renderCreator) {
+export function createHOC(renderCreator) {
   return class HooksController extends React.Component {
     // TODO: downgrade?
     static contextType = context.Consumer;
@@ -19,7 +19,10 @@ export function withHooks(renderCreator) {
       this._effects = [];
       this._subscribers = [];
       this._unsubscribers = [];
-      this.state = {};
+      this.state = {
+        // debug
+        used: []
+      };
 
       const stateUpdaters = [];
       const stateUpdateSubscribers = [];
@@ -30,7 +33,7 @@ export function withHooks(renderCreator) {
         try {
           const newState = stateUpdaters.reduce(
             (acc, update) => Object.assign(acc, update(acc)),
-            Object.assign({}, state),
+            Object.assign({}, state)
           );
           return newState;
         } finally {
@@ -50,12 +53,12 @@ export function withHooks(renderCreator) {
         this.setState(updateState, publishUpdates);
       };
 
-      const use = {
-        returnInitial: () => {
+      const ctx = {
+        getInitial: () => {
           if (!initialPhase) preventUseHooksInRender();
           return { props, context };
         },
-        state: initialState => {
+        newState: initialState => {
           if (!initialPhase) preventUseHooksInRender();
           const id = stateObserverId++;
           this.state[id] = initialState;
@@ -63,31 +66,38 @@ export function withHooks(renderCreator) {
             get: () => this.state[id],
             set: (update, cb) => {
               const updateCallback =
-                typeof update === 'function' ? update : () => update;
+                typeof update === "function" ? update : () => update;
               stateUpdaters.push(state => ({
-                [id]: updateCallback(state[id]),
+                [id]: updateCallback(state[id])
               }));
               if (cb) stateUpdateSubscribers.push(cb);
               startUpdateState();
-            },
+            }
           };
         },
-        effect: cb => {
+        newEffect: cb => {
           if (!initialPhase) preventUseHooksInRender();
           this._effects.push(cb);
         },
         subscribe: subscriber => {
           if (!initialPhase) preventUseHooksInRender();
           this._subscribers.push(subscriber);
-        },
+        }
       };
-      this._render = renderCreator(use, props, context);
+
+      const executor = cb => {
+        // debug
+        this.state.used.push(cb.name || cb.toString());
+        return cb(ctx);
+      };
+
+      this._render = renderCreator(executor, props, context);
 
       initialPhase = false;
     }
     componentDidMount() {
       this._unsubscribers = this._subscribers.map(cb =>
-        cb(this.props, this.context),
+        cb(this.props, this.context)
       );
       // TODO: this is really needed?
       this._effects.forEach(cb => cb(this.props, this.context));

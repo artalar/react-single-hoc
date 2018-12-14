@@ -8,7 +8,7 @@
 
 > detailed motivation about inline hooks vs factory hooks you can find in [react-factory-hooks](https://github.com/PutziSan/react-factory-hooks) proposal.
 
-> difference between `react-single-ho`c and `react-factory-hooks` in usage local vs global hooks controller. Local controller is fully isolating hooks and simplifies testing.
+> difference between `react-single-hoc` and `react-factory-hooks` in usage local vs global hooks controller. Local controller is fully isolating hooks and simplifies testing.
 
 Eventually `react-single-hoc` is a way to compose not HOCs, but their logic, for excuding cascade problems and [others](https://reactjs.org/docs/hooks-intro.html#motivation)
 
@@ -27,7 +27,7 @@ import createHOC from "@artalar/react-single-hoc"
 // functional stateful component
 export const Counter = createHOC(use => {
   // initial phase == constructor
-  const { get, set } = use.state(0);
+  const { get, set } = use(({ newState }) => newState(0));
   const increment = () => set(get() + 1);
   const decrement = () => set(get() - 1);
 
@@ -51,11 +51,11 @@ export const Counter = createHOC(use => {
 ```javascript
 type Use<Props, Context> = {
     // get initial props and context
-    returnInitial: () => { props: Props, context: Context },
+    getInitial: () => { props: Props, context: Context },
     // create local state
-    state: <S>(initialState: S) => { get: () => S, set: (newState: S) => void },
+    newState: <S>(initialState: S) => { get: () => S, set: (newState: S) => void },
     // subscribe to updates
-    effect: ((props: Props, context: Context) => any) => void,
+    newEffect: ((props: Props, context: Context) => any) => void,
     // subscribe to mount and unmount
     subscribe: ((props: Props, context: Context) => () => void)) => void
 }
