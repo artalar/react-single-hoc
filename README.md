@@ -14,6 +14,8 @@ Eventually `react-single-hoc` is a way to compose not HOCs, but their logic, for
 
 ## Example
 
+> ready status: **PoC**
+
 ### Main
 
 [![Demo](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/01z7mz90rv)
