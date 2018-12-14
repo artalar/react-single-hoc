@@ -22,11 +22,11 @@ Eventually `react-single-hoc` is a way to compose not HOCs, but their logic, for
 
 ### Basic
 ```javascript
-import withHooks from "@artalar/react-single-hoc"
+import createHOC from "@artalar/react-single-hoc"
 
 // functional stateful component
-export const Counter = withHooks(use => {
-  // initial phase
+export const Counter = createHOC(use => {
+  // initial phase == constructor
   const { get, set } = use.state(0);
   const increment = () => set(get() + 1);
   const decrement = () => set(get() - 1);
@@ -42,4 +42,23 @@ export const Counter = withHooks(use => {
     </div>
   );
 });
+```
+
+### API
+
+> WIP
+
+```javascript
+type Use<Props, Context> = {
+    // get initial props and context
+    returnInitial: () => { props: Props, context: Context },
+    // create local state
+    state: <S>(initialState: S) => { get: () => S, set: (newState: S) => void },
+    // subscribe to updates
+    effect: ((props: Props, context: Context) => any) => void,
+    // subscribe to mount and unmount
+    subscribe: ((props: Props, context: Context) => () => void)) => void
+}
+
+declare function withHOC<P, C>(use: Use<P, C> => (props: P) => ReactElement)
 ```
