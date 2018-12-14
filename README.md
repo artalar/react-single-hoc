@@ -46,7 +46,7 @@ export const Counter = createHOC(use => {
 
 ### API
 
-> WIP
+> **WIP**
 
 ```javascript
 type Use<Props, Context> = {
@@ -60,5 +60,13 @@ type Use<Props, Context> = {
     subscribe: ((props: Props, context: Context) => () => void)) => void
 }
 
-declare function withHOC<P, C>(use: Use<P, C> => (props: P) => ReactElement)
+declare function createHOC<P, C>(use: Use<P, C> => (props: P) => ReactElement)
 ```
+
+### Tips
+
+> You can wrap `createHOC` and `use` (first argument) for insert middlewares
+
+> All hooks logged in state property `used` of container
+![image](https://user-images.githubusercontent.com/27290320/49999118-10b94a00-ffa7-11e8-86e7-2fe4541ec0f2.png)
+
