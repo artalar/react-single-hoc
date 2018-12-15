@@ -32,11 +32,14 @@
     "@babel/polyfill": "^7.0.0",
     "@babel/preset-env": "^7.1.6",
     "@babel/preset-flow": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^23.6.0",
     "babel-loader": "^8.0.4",
     "cross-env": "^5.2.0",
+    "enzyme": "^3.8.0",
+    "enzyme-adapter-react-16": "^1.7.1",
     "eslint": "^5.9.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-prettier": "^3.3.0",
@@ -48,6 +51,8 @@
     "jest": "^23.6.0",
     "peer-deps-externals-webpack-plugin": "^1.0.4",
     "prettier": "^1.15.2",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
     "rimraf": "^2.6.2",
     "webpack": "^4.25.1",
     "webpack-cli": "^3.1.2"
@@ -68,11 +73,6 @@
     "react-hooks",
     "HOC"
   ],
-  "jest": {
-    "transform": {
-      ".jsx?$": "babel-jest"
-    }
-  },
   "directories": {
     "lib": "lib"
   }

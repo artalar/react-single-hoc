@@ -1,7 +1,7 @@
-import {Provider as createHOCProvider, createHOC} from './react-single-hoc'
+import { Provider, createHOC } from './react-single-hoc'
 
-createHOC.Provider = createHOCProvider
+createHOC.Provider = Provider
 
-export const Provider = createHOCProvider
+export { Provider, createHOC }
 
 export default createHOC
