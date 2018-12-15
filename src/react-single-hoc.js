@@ -16,13 +16,15 @@ export function createHOC(renderCreator) {
     constructor(props, context) {
       super(props, context);
 
-      this._effects = [];
-      this._subscribers = [];
-      this._unsubscribers = [];
+      this._componentDidMountHooks = new Set();
+      this._getSnapshotBeforeUpdateHooks = new Set();
+      this._componentDidUpdateHooks = new Set();
+      this._componentWillUnmountHooks = new Set();
       this.state = {
         // debug
         used: []
       };
+      this._contextExecutor = cb => cb(this.props, this.context);
 
       const stateUpdaters = [];
       const stateUpdateSubscribers = [];
@@ -53,12 +55,12 @@ export function createHOC(renderCreator) {
         this.setState(updateState, publishUpdates);
       };
 
-      const ctx = {
+      const hooks = {
         getInitial: () => {
           if (!initialPhase) preventUseHooksInRender();
           return { props, context };
         },
-        newState: initialState => {
+        createState: initialState => {
           if (!initialPhase) preventUseHooksInRender();
           const id = stateObserverId++;
           this.state[id] = initialState;
@@ -75,38 +77,46 @@ export function createHOC(renderCreator) {
             }
           };
         },
-        newEffect: cb => {
+        addToComponentDidMount: callback => {
           if (!initialPhase) preventUseHooksInRender();
-          this._effects.push(cb);
+          this._componentDidMountHooks.add(callback);
         },
-        subscribe: subscriber => {
+        addToGetSnapshotBeforeUpdate: callback => {
           if (!initialPhase) preventUseHooksInRender();
-          this._subscribers.push(subscriber);
-        }
+          this._getSnapshotBeforeUpdateHooks.add(callback);
+        },
+        addToComponentDidUpdate: callback => {
+          if (!initialPhase) preventUseHooksInRender();
+          this._componentDidUpdateHooks.add(callback);
+        },
+        addToComponentWillUnmount: callback => {
+          if (!initialPhase) preventUseHooksInRender();
+          this._componentWillUnmountHooks.add(callback);
+        },
       };
 
-      const executor = cb => {
+      const hooksGetter = cb => {
         // debug
         this.state.used.push(cb.name || cb.toString());
-        return cb(ctx);
+        return cb(hooks);
       };
 
-      this._render = renderCreator(executor, props, context);
+      this._render = renderCreator(hooksGetter, props, context);
 
       initialPhase = false;
     }
     componentDidMount() {
-      this._unsubscribers = this._subscribers.map(cb =>
-        cb(this.props, this.context)
-      );
-      // TODO: this is really needed?
-      this._effects.forEach(cb => cb(this.props, this.context));
+      this._componentDidMountHooks.forEach(this._contextExecutor);
+    }
+    getSnapshotBeforeUpdate() {
+      this._getSnapshotBeforeUpdateHooks.forEach(this._contextExecutor);
+      return null;
     }
     componentDidUpdate() {
-      this._effects.forEach(cb => cb(this.props, this.context));
+      this._componentDidUpdateHooks.forEach(this._contextExecutor);
     }
     componentWillUnmount() {
-      this._unsubscribers.forEach(cb => cb(this.props, this.context));
+      this._componentWillUnmountHooks.forEach(this._contextExecutor);
     }
     render() {
       return this._render(this.props);
