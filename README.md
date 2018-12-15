@@ -22,12 +22,12 @@ Eventually `react-single-hoc` is a way to compose not HOCs, but their logic, for
 
 ### Basic
 ```javascript
-import createHOC from "@artalar/react-single-hoc"
+import createHOC, { createState } from "@artalar/react-single-hoc"
 
 // functional stateful component
 export const Counter = createHOC(use => {
   // initial phase == constructor
-  const { get, set } = use(({ newState }) => newState(0));
+  const { get, set } = use(createState(0));
   const increment = () => set(get() + 1);
   const decrement = () => set(get() - 1);
 
@@ -46,27 +46,26 @@ export const Counter = createHOC(use => {
 
 ### API
 
-> **WIP**
-
 ```javascript
-type Use<Props, Context> = {
-    // get initial props and context
-    getInitial: () => { props: Props, context: Context },
-    // create local state
-    newState: <S>(initialState: S) => { get: () => S, set: (newState: S) => void },
-    // subscribe to updates
-    newEffect: ((props: Props, context: Context) => any) => void,
-    // subscribe to mount and unmount
-    subscribe: ((props: Props, context: Context) => () => void)) => void
-}
+declare function createHOC<P, C>(hooks: Hooks<P, C> => (props: P) => ReactElement)
 
-declare function createHOC<P, C>(use: Use<P, C> => (props: P) => ReactElement)
+type Hooks<Props, Context> = {
+  // get initial props and context
+  getInitial: () => { props: Props, context: Context },
+  // create local state
+  newState: <S>(initialState: S) => { get: () => S, set: (newState: S) => void },
+
+  addToComponentDidMount: (callback: (props: Props, context: Context) => any) => void,
+  addToGetSnapshotBeforeUpdate: (callback: (props: Props, context: Context) => any) => void,
+  addToComponentDidUpdate: (callback: (props: Props, context: Context) => any) => void,
+  addToComponentWillUnmount: (callback: (props: Props, context: Context) => any) => void,
+}
 ```
 
 ### Tips
 
-> You can wrap `createHOC` and `use` (first argument) for insert middlewares
+> You can wrap `createHOC` and `hooks` (first argument) for insert middlewares
 
-> All hooks logged in state property `used` of container
+> All hooks logged in state property `hooks` of container
 ![image](https://user-images.githubusercontent.com/27290320/49999118-10b94a00-ffa7-11e8-86e7-2fe4541ec0f2.png)
 
