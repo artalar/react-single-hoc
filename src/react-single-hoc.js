@@ -22,7 +22,7 @@ export function createHOC(renderCreator) {
       this._componentWillUnmountHooks = new Set();
       this.state = {
         // debug
-        used: []
+        used: [],
       };
       this._contextExecutor = cb => cb(this.props, this.context);
 
@@ -35,7 +35,7 @@ export function createHOC(renderCreator) {
         try {
           const newState = stateUpdaters.reduce(
             (acc, update) => Object.assign(acc, update(acc)),
-            Object.assign({}, state)
+            Object.assign({}, state),
           );
           return newState;
         } finally {
@@ -68,13 +68,13 @@ export function createHOC(renderCreator) {
             get: () => this.state[id],
             set: (update, cb) => {
               const updateCallback =
-                typeof update === "function" ? update : () => update;
+                typeof update === 'function' ? update : () => update;
               stateUpdaters.push(state => ({
-                [id]: updateCallback(state[id])
+                [id]: updateCallback(state[id]),
               }));
               if (cb) stateUpdateSubscribers.push(cb);
               startUpdateState();
-            }
+            },
           };
         },
         addToComponentDidMount: callback => {

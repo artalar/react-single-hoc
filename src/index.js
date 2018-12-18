@@ -1,9 +1,9 @@
-import { Provider, createHOC } from './react-single-hoc'
+import { Provider, createHOC } from './react-single-hoc';
 
-createHOC.Provider = Provider
+createHOC.Provider = Provider;
 
-export { Provider, createHOC }
+export { Provider, createHOC };
 
-export default createHOC
+export default createHOC;
 
-export * from './hooks'
+export * from './hooks';
