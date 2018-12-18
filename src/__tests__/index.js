@@ -1,6 +1,7 @@
 import React from 'react';
 import { shallow, mount, render } from 'enzyme';
 
+// TODO: add test for internal API (lifecycle hooks)
 describe('react-single-hoc', () => {
   it('state', () => {
     const { createHOC, createState } = require('../');
