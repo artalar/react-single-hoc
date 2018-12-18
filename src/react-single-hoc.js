@@ -1,12 +1,12 @@
 import React from 'react';
 
-function preventUseHooksInRender() {
-  throw new Error('You can not use hooks outside initial phase');
-}
-
 const context = React.createContext({});
 
 export const Provider = context.Provider;
+
+function getNewStateName(idx) {
+  return `state #${idx}`;
+}
 
 export function createHOC(renderCreator) {
   return class HooksController extends React.Component {
@@ -22,7 +22,7 @@ export function createHOC(renderCreator) {
       this._componentWillUnmountHooks = new Set();
       this.state = {
         // debug
-        used: [],
+        hooks: [],
       };
       this._contextExecutor = cb => cb(this.props, this.context);
 
@@ -57,12 +57,12 @@ export function createHOC(renderCreator) {
 
       const hooks = {
         getInitial: () => {
-          if (!initialPhase) preventUseHooksInRender();
+          this._preventUseHooksInRender(initialPhase);
           return { props, context };
         },
         createState: initialState => {
-          if (!initialPhase) preventUseHooksInRender();
-          const id = stateObserverId++;
+          this._preventUseHooksInRender(initialPhase);
+          const id = getNewStateName(stateObserverId++);
           this.state[id] = initialState;
           return {
             get: () => this.state[id],
@@ -78,32 +78,36 @@ export function createHOC(renderCreator) {
           };
         },
         addToComponentDidMount: callback => {
-          if (!initialPhase) preventUseHooksInRender();
+          this._preventUseHooksInRender(initialPhase);
           this._componentDidMountHooks.add(callback);
         },
         addToGetSnapshotBeforeUpdate: callback => {
-          if (!initialPhase) preventUseHooksInRender();
+          this._preventUseHooksInRender(initialPhase);
           this._getSnapshotBeforeUpdateHooks.add(callback);
         },
         addToComponentDidUpdate: callback => {
-          if (!initialPhase) preventUseHooksInRender();
+          this._preventUseHooksInRender(initialPhase);
           this._componentDidUpdateHooks.add(callback);
         },
         addToComponentWillUnmount: callback => {
-          if (!initialPhase) preventUseHooksInRender();
+          this._preventUseHooksInRender(initialPhase);
           this._componentWillUnmountHooks.add(callback);
         },
       };
 
       const hooksGetter = cb => {
         // debug
-        this.state.used.push(cb.name || cb.toString());
+        this.state.hooks.push(cb.name || cb.toString());
         return cb(hooks);
       };
 
       this._render = renderCreator(hooksGetter, props, context);
 
       initialPhase = false;
+    }
+    _preventUseHooksInRender(initialPhase) {
+      if (!initialPhase)
+        throw new Error('You can not use hooks outside initial phase');
     }
     componentDidMount() {
       this._componentDidMountHooks.forEach(this._contextExecutor);

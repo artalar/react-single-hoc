@@ -104,4 +104,24 @@ describe('react-single-hoc', () => {
     cb();
     expect(track.mock.calls.length).toBe(1);
   });
+
+  it('do not use hooks outside initial phase', () => {
+    const { createHOC, createState } = require('../');
+
+    const Counter = createHOC(use => {
+      return () => {
+        use(createState(0));
+        return (
+          <div>
+            <span>{get()}</span>
+            <button onClick={increment}>Increment</button>
+          </div>
+        );
+      };
+    });
+
+    expect(() => mount(<Counter />)).toThrow(
+      'You can not use hooks outside initial phase',
+    );
+  });
 });
